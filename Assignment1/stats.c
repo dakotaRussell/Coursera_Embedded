@@ -29,6 +29,11 @@
 #include <stdio.h>
 #include "stats.h"
 
+static void swap(unsigned char* x, unsigned char* y);
+static int partition(unsigned char* array, int left, int right, 
+		unsigned char pivot);
+static void sort_array_helper(unsigned char* array, int left, int right);
+
 /* Size of the Data Set */
 #define SIZE (40)
 
@@ -39,7 +44,8 @@ void main() {
                               200, 122, 150, 90,   92,  87, 177, 244,
                               201,   6,  12,  60,   8,   2,   5,  67,
                                 7,  87, 250, 230,  99,   3, 100,  90};
-
+  
+  
   /* Other Variable Declarations Go Here */
   sort_array(test, SIZE);
   unsigned char minimum = find_minimum(test, SIZE);
@@ -50,11 +56,10 @@ void main() {
   /* Statistics and Printing Functions Go Here */
   print_array(test, SIZE);
   print_statistics(minimum, maximum, median, mean);
-
 }
 
 /* Add other Implementation File Code Here */
-unsigned char find_maximum(unsigned char[] array, int length){
+unsigned char find_maximum(unsigned char* array, int length){
   if (array == NULL) return 0;
   unsigned char maximum = array[0];
   for (int i=0; i<length; i++){
@@ -64,7 +69,7 @@ unsigned char find_maximum(unsigned char[] array, int length){
   return maximum;
 }
 
-unsigned char find_mean(unsigned char[] array, int length){
+unsigned char find_mean(unsigned char* array, int length){
   if (array == NULL) return 0;
   unsigned int sum = 0;
   for (int i=0; i<length; i++){
@@ -73,14 +78,14 @@ unsigned char find_mean(unsigned char[] array, int length){
   return (unsigned char)(sum/length);
 }
 
-unsigned char find_median(unsigned char[] array, int length){
+unsigned char find_median(unsigned char* array, int length){
   if (array == NULL) return 0;
   // Cannot assume input array was sorted.
   sort_array(array, length);
   return array[length/2];
 }
 
-unsigned char find_minimum(unsigned char[] array, int length){
+unsigned char find_minimum(unsigned char* array, int length){
   if (array == NULL) return 0;
   unsigned char minimum = array[0];
   for (int i=0; i<length; i++){
@@ -90,12 +95,12 @@ unsigned char find_minimum(unsigned char[] array, int length){
   return minimum;
 }
 
-void print_array(unsigned char[] array, int length){
+void print_array(unsigned char* array, int length){
   if (array == NULL || length == 0) return;
   for (int i=0; i<length-1; i++){
     printf("%d, ", array[i]);
   }
-  printf("%d", array[length-1]);
+  printf("%d\n", array[length-1]);
   return;
 }
 
@@ -114,28 +119,33 @@ static void swap(unsigned char* x, unsigned char* y){
   *y = tmp;
 }
 
-static int partition(unsigned char[] array, int left, int right, int pivot){
+static int partition(unsigned char* array, int left, int right, 
+		unsigned char pivot){
   while (left <= right){
-    while (array[left] > pivot) left++;
-    while (array[right] < pivot) right--;
+    while (array[left] > pivot){ left++; }
+    while (array[right] < pivot){ right--; }
 
-    swap(&array[left], &array[right]);
+    if (left <= right){
+      swap(&array[left], &array[right]);
+      left++;
+      right--;
+    }
   }
   return left;
 }
 
-static void sort_array(unsigned char[] array, int left, int right){
+static void sort_array_helper(unsigned char* array, int left, int right){
   if (left >= right) return;
 
   int pivot = (left + right)/2;
-  int partition = partition(array, left, right, array[pivot]);
-  sort_array(array, left, partition-1);
-  sort_array(array, partition+1, right);
+  int partitionIndex = partition(array, left, right, array[pivot]);
+  sort_array_helper(array, left, partitionIndex-1);
+  sort_array_helper(array, partitionIndex, right);
   return;
 }
 
-void sort_array(unsigned char[] array, int length){
+void sort_array(unsigned char* array, int length){
   if (array == NULL || length == 0) return;
-  sort_array(array, 0, length-1);
+  sort_array_helper(array, 0, length-1);
   return;
 }

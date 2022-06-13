@@ -37,7 +37,7 @@
  *
  * @return Maximum value of dataset.
  */
-unsigned char find_maximum(unsigned char[] array, int length);
+unsigned char find_maximum(unsigned char* array, int length);
 
 /* @brief Find Mean of Dataset.
  *
@@ -48,7 +48,7 @@ unsigned char find_maximum(unsigned char[] array, int length);
  *
  * @return Mean value of dataset as integer.
  */
-unsigned char find_mean(unsigned char[] array, int length);
+unsigned char find_mean(unsigned char* array, int length);
 
 /* @brief Find Median of Dataset.
  *
@@ -59,7 +59,7 @@ unsigned char find_mean(unsigned char[] array, int length);
  *
  * @return Median value of dataset.
  */
-unsigned char find_median(unsigned char[] array, int length);
+unsigned char find_median(unsigned char* array, int length);
 
 /* @brief Find Minimum of Dataset.
  *
@@ -70,7 +70,7 @@ unsigned char find_median(unsigned char[] array, int length);
  *
  * @return Minimum value of dataset.
  */
-unsigned char find_minimum(unsigned char[] array, int length);
+unsigned char find_minimum(unsigned char* array, int length);
 
 /* @brief Print array.
  *
@@ -81,7 +81,7 @@ unsigned char find_minimum(unsigned char[] array, int length);
  *
  * @return void.
  */
-void print_array(unsigned char[] array, int length);
+void print_array(unsigned char* array, int length);
 
 /* @brief Print statistics.
  *
@@ -106,6 +106,6 @@ void print_statistics(unsigned char minimum, unsigned char maximum,
  *
  * @return void.
  */
-void sort_array(unsigned char[] array, int length);
+void sort_array(unsigned char* array, int length);
 
 #endif
