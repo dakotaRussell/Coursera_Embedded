@@ -28,27 +28,84 @@
 #ifndef __STATS_H__
 #define __STATS_H__
 
-/* Add Your Declarations and Function Comments here */ 
-
-/**
- * @brief <Add Brief Description of Function Here>
+/* @brief Find Maximum of Dataset.
  *
- * <Add Extended Description Here>
+ * Find maximum value of dataset.
  *
- * @param <Add InputName> <add description here>
- * @param <Add InputName> <add description here>
- * @param <Add InputName> <add description here>
- * @param <Add InputName> <add description here>
+ * @param array Input array to find maximum of.
+ * @param length Length of input array.
  *
- * @return <Add Return Informaiton here>
+ * @return Maximum value of dataset.
  */
+unsigned char find_maximum(unsigned char[] array, int length);
 
-unsigned char find_maximum(unsigned char* array, int length);
-unsigned char find_mean(unsigned char* array, int length);
-unsigned char find_median(unsigned char* array, int length);
-unsigned char find_minimum(unsigned char* array, int length);
-unsigned char print_array(unsigned char* array, int length);
-unsigned char print_statistics(unsigned char* array, int length);
-unsigned char sort_array(unsigned char* array, int length);
+/* @brief Find Mean of Dataset.
+ *
+ * Find mean value of dataset. Round mean down to nearest integer.
+ *
+ * @param array Input array to find mean of.
+ * @param length Length of input array.
+ *
+ * @return Mean value of dataset as integer.
+ */
+unsigned char find_mean(unsigned char[] array, int length);
+
+/* @brief Find Median of Dataset.
+ *
+ * Find median value of dataset.
+ *
+ * @param array Input array to find median of.
+ * @param length Length of input array.
+ *
+ * @return Median value of dataset.
+ */
+unsigned char find_median(unsigned char[] array, int length);
+
+/* @brief Find Minimum of Dataset.
+ *
+ * Find minimum value of dataset.
+ *
+ * @param array Input array to find minimum of.
+ * @param length Length of input array.
+ *
+ * @return Minimum value of dataset.
+ */
+unsigned char find_minimum(unsigned char[] array, int length);
+
+/* @brief Print array.
+ *
+ * Print array values to screen.
+ *
+ * @param array Input array to print.
+ * @param length Length of input array.
+ *
+ * @return void.
+ */
+void print_array(unsigned char[] array, int length);
+
+/* @brief Print statistics.
+ *
+ * Print provided statistics in a formatted manner to screen.
+ *
+ * @param minimum Dataset minimum as integer.
+ * @param maximum Dataset maximum as integer.
+ * @param median Dataset median as integer.
+ * @param mean Dataset mean as integer.
+ *
+ * @return void.
+ */
+void print_statistics(unsigned char minimum, unsigned char maximum, 
+		unsigned char median, unsigned char mean);
+
+/* @brief Sort array.
+ *
+ * Sort input array from largest to smallest in-place.
+ *
+ * @param array Input array to sort.
+ * @param length Length of input array.
+ *
+ * @return void.
+ */
+void sort_array(unsigned char[] array, int length);
 
 #endif
