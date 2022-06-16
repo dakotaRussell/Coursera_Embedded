@@ -46,7 +46,7 @@ ifeq ($(PLATFORM),MSP432)
 
    # Compiler Flags and Defines
    CPP = arm-none-eabi-cpp
-#   CC = arm-none-eabi-gcc
+   CC = arm-none-eabi-gcc
 #   AS = arm-none-eabi-as
 #   LD = arm-none-eabi-ld
 #   LDFLAGS = -T $(LINKER_FILE) \
