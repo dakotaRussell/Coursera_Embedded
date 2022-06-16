@@ -76,26 +76,37 @@ else
             -g
 endif
 
+# Approach 1: Always starting from source.
+# Assemble Individual Files
 # Overwrite GNU Make Built-in rule
 %.o : %.c
-
-# Assemble Individual Files
-# Same functionality as: gcc -c $(CFLAGS) $(CPPFLAGS) %.c -o %.o
-%.o : %.asm
-	$(AS) $< -o $@
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 # Compile Individual Files
-%.asm : %.i
-	$(CC) -S $(CFLAGS) $< -o $@
+%.asm : %.c
+	$(CC) -S $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 # Preprocess Individual Files
-# Same functionality as: gcc -E $(CFLAGS) $(CPPFLAGS) %.c -o %.i
 %.i : %.c
-	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(CC) -E $(CPPFLAGS) $(CFLAGS) $< -o $@
 
-#.PHONY: compile-all
-#compile-all : $(OBJS) 
+# This is more accurately described as assemble-all.
+.PHONY: compile-all
+compile-all : $(OBJS)
 
+# Approach 2: Chain the results from previous step as input to next step in build.
+# Assemble Individual Files
+#%.o : %.asm
+#	$(AS) $< -o $@
+#
+# Compile Individual Files
+#%.asm : %.i
+#	$(CC) -S $(CPPFLAGS) $(CFLAGS) $< -o $@
+#
+# Preprocess Individual Files
+#%.i : %.c
+#	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
+#
 #$(TARGET): compile-all
 #	$(LD) $(LDFLAGS) $^ -o $@
 
