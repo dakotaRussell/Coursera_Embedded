@@ -45,8 +45,8 @@ ifeq ($(PLATFORM),MSP432)
    SPECS =nosys.specs
 
    # Compiler Flags and Defines
-#   CC = arm-none-eabi-gcc
    CPP = arm-none-eabi-cpp
+#   CC = arm-none-eabi-gcc
 #   AS = arm-none-eabi-as
 #   LD = arm-none-eabi-ld
 #   LDFLAGS = -T $(LINKER_FILE) \
@@ -63,8 +63,8 @@ ifeq ($(PLATFORM),MSP432)
 # Host Specific
 else
    # Compiler Flags and Defines
-   CC = gcc
    CPP = cpp
+   CC = gcc
 #   AS = as
 #   LD = ld
 #   LDFLAGS = -Wl,$(MAPFILE)
@@ -73,16 +73,19 @@ else
             -g
 endif
 
+# Preprocess Individual Files
 %.i : %.c
-	$(CPP) -E $(CPPFLAGS) $(CFLAGS) $< -o $@
+	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
 
+# Compile Individual Files
 %.asm : %.i
 	$(CC) -S $(CFLAGS) $< -o $@
 
+# Assemble Individual Files
 #%.o : %.asm
 #	$(AS) -c $(CFLAGS) $< -o $@
 
-#.PHONY: compile-all 
+#.PHONY: compile-all
 #compile-all : $(OBJS) 
 
 #$(TARGET): compile-all
