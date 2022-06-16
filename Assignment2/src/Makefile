@@ -15,7 +15,10 @@
 # Use: make [TARGET] [PLATFORM-OVERRIDES]
 #
 # Build Targets:
-#      <Put a description of the supported targets here>
+#      compile-all - All files in project compiled, but not linked.
+#      <filename>.o - Assembled version of input file.
+#      <filename>.asm - Compiled version of input file.
+#      <filename>.i - Preprocessed version of input file.
 #
 # Platform Overrides:
 # 	PLATFORM - Target platform (HOST, MSP432)
@@ -43,11 +46,11 @@ ifeq ($(PLATFORM),MSP432)
    CPU =cortex-m4
    ARCH =thumb
    SPECS =nosys.specs
-
+   
    # Compiler Flags and Defines
    CPP = arm-none-eabi-cpp
    CC = arm-none-eabi-gcc
-#   AS = arm-none-eabi-as
+   AS = arm-none-eabi-as
 #   LD = arm-none-eabi-ld
 #   LDFLAGS = -T $(LINKER_FILE) \
              -Wl,$(MAPFILE)
@@ -65,7 +68,7 @@ else
    # Compiler Flags and Defines
    CPP = cpp
    CC = gcc
-#   AS = as
+   AS = as
 #   LD = ld
 #   LDFLAGS = -Wl,$(MAPFILE)
    CFLAGS = -DHOST \
@@ -73,17 +76,22 @@ else
             -g
 endif
 
-# Preprocess Individual Files
-%.i : %.c
-	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
+# Overwrite GNU Make Built-in rule
+%.o : %.c
+
+# Assemble Individual Files
+# Same functionality as: gcc -c $(CFLAGS) $(CPPFLAGS) %.c -o %.o
+%.o : %.asm
+	$(AS) $< -o $@
 
 # Compile Individual Files
 %.asm : %.i
 	$(CC) -S $(CFLAGS) $< -o $@
 
-# Assemble Individual Files
-#%.o : %.asm
-#	$(AS) -c $(CFLAGS) $< -o $@
+# Preprocess Individual Files
+# Same functionality as: gcc -E $(CFLAGS) $(CPPFLAGS) %.c -o %.i
+%.i : %.c
+	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 #.PHONY: compile-all
 #compile-all : $(OBJS) 
