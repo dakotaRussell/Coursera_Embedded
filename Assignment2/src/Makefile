@@ -15,7 +15,10 @@
 # Use: make [TARGET] [PLATFORM-OVERRIDES]
 #
 # Build Targets:
+#      c1m2.out - Final executable file.
+#      build - Final executable file.
 #      compile-all - All files in project compiled, but not linked.
+#      c1m2.asm - Assembly of final executable.
 #      <filename>.o - Assembled version of input file.
 #      <filename>.asm - Compiled version of input file.
 #      <filename>.i - Preprocessed version of input file.
@@ -51,9 +54,9 @@ ifeq ($(PLATFORM),MSP432)
    CPP = arm-none-eabi-cpp
    CC = arm-none-eabi-gcc
    AS = arm-none-eabi-as
-#   LD = arm-none-eabi-ld
-#   LDFLAGS = -T $(LINKER_FILE) \
-             -Wl,$(MAPFILE)
+   LD = arm-none-eabi-ld
+   LDFLAGS = -T $(LINKER_FILE) \
+             -Wl,-Map=$(MAPFILE)
    CFLAGS = -mcpu=$(CPU) \
             -m$(ARCH) \
             -march=armv7e-m \
@@ -69,12 +72,27 @@ else
    CPP = cpp
    CC = gcc
    AS = as
-#   LD = ld
-#   LDFLAGS = -Wl,$(MAPFILE)
+   LD = ld
+   LDFLAGS = -Wl,-Map=$(MAPFILE)
    CFLAGS = -DHOST \
             -O0 \
             -g
 endif
+
+.PHONY: build
+build: $(TARGET)
+
+# Assembly size of final executable.
+$(BASENAME).asm : $(TARGET)
+	objdump $<
+
+# Link objects file into final executable.
+$(TARGET): $(OBJS)
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $^ -o $@
+
+# This is more accurately described as assemble-all.
+.PHONY: compile-all
+compile-all : $(OBJS)
 
 # Approach 1: Always starting from source.
 # Assemble Individual Files
@@ -90,10 +108,6 @@ endif
 %.i : %.c
 	$(CC) -E $(CPPFLAGS) $(CFLAGS) $< -o $@
 
-# This is more accurately described as assemble-all.
-.PHONY: compile-all
-compile-all : $(OBJS)
-
 # Approach 2: Chain the results from previous step as input to next step in build.
 # Assemble Individual Files
 #%.o : %.asm
@@ -107,15 +121,6 @@ compile-all : $(OBJS)
 #%.i : %.c
 #	$(CPP) $(CPPFLAGS) $(CFLAGS) $< -o $@
 #
-#$(TARGET): compile-all
-#	$(LD) $(LDFLAGS) $^ -o $@
-
-#.PHONY: build
-#build: $(TARGET)
-
-#$(BASENAME).asm : $(TARGET)
-#	objdump $<
-
 .PHONY: clean
 clean:
 	rm -f $(OBJS) $(TARGET) $(MAPFILE) *.i *.asm
