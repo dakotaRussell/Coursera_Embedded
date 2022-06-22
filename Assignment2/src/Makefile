@@ -61,6 +61,7 @@ ifeq ($(PLATFORM),MSP432)
    CC = arm-none-eabi-gcc
    AS = arm-none-eabi-as
    LD = arm-none-eabi-ld
+   OBJDUMP = arm-none-eabi-objdump
    LDFLAGS = -Map=$(MAPFILE) \
              -T $(LINKER_FILE)
    CFLAGS = -mcpu=$(CPU) \
@@ -79,6 +80,7 @@ else
    CC = gcc
    AS = as
    LD = ld
+   OBJDUMP = objdump
    LDFLAGS = -Map=$(MAPFILE)
    CFLAGS = -DHOST \
             -O0 \
@@ -90,18 +92,18 @@ build: $(TARGET)
 
 # Assembly size of final executable.
 $(BASENAME).asm : $(TARGET)
-	objdump $<
+	$(OBJDUMP) -S $<
 
 # Link objects file into final executable.
 $(TARGET): $(OBJS)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -Wl,$(LDFLAGS) $^ -o $@
 
 # Create dependency directory if it doesn't exist.
-#$(DEPDIR): ;
-#	@mkdir -p $@
+$(DEPDIR): ;
+	@mkdir -p $@
 
 # Create dependency file target.
-#$(DEPS):
+$(DEPS):
 
 # This is more accurately described as assemble-all.
 .PHONY: compile-all
@@ -111,9 +113,8 @@ compile-all : $(OBJS)
 # Assemble Individual Files
 # Overwrite GNU Make Built-in rule
 %.o : %.c
-	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
-#%.o : %.c $(DEPDIR)/%.d | $(DEPDIR)
-#	$(CC) -c $(DEPFLAGS) $(CPPFLAGS) $(CFLAGS) $< -o $@
+%.o : %.c $(DEPDIR)/%.d | $(DEPDIR)
+	$(CC) -c $(DEPFLAGS) $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 # Compile Individual Files
 %.asm : %.c
@@ -144,4 +145,4 @@ compile-all : $(OBJS)
 clean:
 	rm -f $(OBJS) $(TARGET) $(MAPFILE) *.i *.asm -r $(DEPDIR)
 
-#include $(wildcard $(DEPS))
+include $(wildcard $(DEPS))
