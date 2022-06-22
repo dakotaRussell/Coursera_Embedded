@@ -40,12 +40,18 @@ CPPFLAGS = -Wall \
 	   -Werror \
 	   -std=c99 \
 	   $(INCLUDES)
+DEPDIR := .deps
+DEPFLAGS = -MT $@\
+           -MMD \
+	   -MP \
+	   -MF $(DEPDIR)/$*.d
 OBJS = $(SOURCES:.c=.o)
+DEPS = $(SOURCES:%.c=$(DEPDIR)/%.d)
 
 # MSP432 Specific
 ifeq ($(PLATFORM),MSP432)
    # Architectures Specific Flags
-#   LINKER_FILE = ../msp432p401r.lds
+   LINKER_FILE = ../msp432p401r.lds
    CPU =cortex-m4
    ARCH =thumb
    SPECS =nosys.specs
@@ -55,8 +61,8 @@ ifeq ($(PLATFORM),MSP432)
    CC = arm-none-eabi-gcc
    AS = arm-none-eabi-as
    LD = arm-none-eabi-ld
-   LDFLAGS = -T $(LINKER_FILE) \
-             -Wl,-Map=$(MAPFILE)
+   LDFLAGS = -Map=$(MAPFILE) \
+             -T $(LINKER_FILE)
    CFLAGS = -mcpu=$(CPU) \
             -m$(ARCH) \
             -march=armv7e-m \
@@ -73,7 +79,7 @@ else
    CC = gcc
    AS = as
    LD = ld
-   LDFLAGS = -Wl,-Map=$(MAPFILE)
+   LDFLAGS = -Map=$(MAPFILE)
    CFLAGS = -DHOST \
             -O0 \
             -g
@@ -88,7 +94,14 @@ $(BASENAME).asm : $(TARGET)
 
 # Link objects file into final executable.
 $(TARGET): $(OBJS)
-	$(CC) $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) $^ -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -Wl,$(LDFLAGS) $^ -o $@
+
+# Create dependency directory if it doesn't exist.
+#$(DEPDIR): ;
+#	@mkdir -p $@
+
+# Create dependency file target.
+#$(DEPS):
 
 # This is more accurately described as assemble-all.
 .PHONY: compile-all
@@ -99,6 +112,8 @@ compile-all : $(OBJS)
 # Overwrite GNU Make Built-in rule
 %.o : %.c
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $< -o $@
+#%.o : %.c $(DEPDIR)/%.d | $(DEPDIR)
+#	$(CC) -c $(DEPFLAGS) $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 # Compile Individual Files
 %.asm : %.c
@@ -109,6 +124,10 @@ compile-all : $(OBJS)
 	$(CC) -E $(CPPFLAGS) $(CFLAGS) $< -o $@
 
 # Approach 2: Chain the results from previous step as input to next step in build.
+# Link objects file into final executable.
+#$(TARGET): $(OBJS)
+#	$(LD) $(LDFLAGS) $^ -o $@
+
 # Assemble Individual Files
 #%.o : %.asm
 #	$(AS) $< -o $@
@@ -123,4 +142,6 @@ compile-all : $(OBJS)
 #
 .PHONY: clean
 clean:
-	rm -f $(OBJS) $(TARGET) $(MAPFILE) *.i *.asm
+	rm -f $(OBJS) $(TARGET) $(MAPFILE) *.i *.asm -r $(DEPDIR)
+
+#include $(wildcard $(DEPS))
