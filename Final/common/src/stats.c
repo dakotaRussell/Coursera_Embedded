@@ -26,7 +26,7 @@
  *
  */
 
-#include <stdio.h>
+#include "platform.h"
 #include "stats.h"
 
 static void swap(unsigned char* x, unsigned char* y);
@@ -37,7 +37,7 @@ static void sort_array_helper(unsigned char* array, int left, int right);
 /* Size of the Data Set */
 #define SIZE (40)
 
-void main() {
+/*void main() {
 
   unsigned char test[SIZE] = { 34, 201, 190, 154,   8, 194,   2,   6,
                               114, 88,   45,  76, 123,  87,  25,  23,
@@ -46,17 +46,17 @@ void main() {
                                 7,  87, 250, 230,  99,   3, 100,  90};
   
   
-  /* Other Variable Declarations Go Here */
+  // Other Variable Declarations Go Here 
   sort_array(test, SIZE);
   unsigned char minimum = find_minimum(test, SIZE);
   unsigned char maximum = find_maximum(test, SIZE);
   unsigned char median = find_median(test, SIZE);
   unsigned char mean = find_mean(test, SIZE);
 
-  /* Statistics and Printing Functions Go Here */
+  // Statistics and Printing Functions Go Here 
   print_array(test, SIZE);
   print_statistics(minimum, maximum, median, mean);
-}
+}*/
 
 /* Add other Implementation File Code Here */
 unsigned char find_maximum(unsigned char* array, int length){
@@ -97,19 +97,21 @@ unsigned char find_minimum(unsigned char* array, int length){
 
 void print_array(unsigned char* array, int length){
   if (array == NULL || length == 0) return;
+#ifdef VERBOSE
   for (int i=0; i<length-1; i++){
-    printf("%d, ", array[i]);
+    PRINTF("%d, ", array[i]);
   }
-  printf("%d\n", array[length-1]);
+  PRINTF("%d\n", array[length-1]);
+#endif
   return;
 }
 
 void print_statistics(unsigned char minimum, unsigned char maximum, 
 		unsigned char median, unsigned char mean){
-  printf("Minimum:\t%d,\n", minimum);
-  printf("Maximum:\t%d,\n", maximum);
-  printf("Median:\t%d,\n", median);
-  printf("Mean:\t%d.\n", mean);
+  PRINTF("Minimum:\t%d,\n", minimum);
+  PRINTF("Maximum:\t%d,\n", maximum);
+  PRINTF("Median:\t%d,\n", median);
+  PRINTF("Mean:\t%d.\n", mean);
   return;
 }
 

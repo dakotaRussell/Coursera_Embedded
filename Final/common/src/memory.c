@@ -22,11 +22,15 @@
  */
 #include "memory.h"
 #include "stats.h"
+#include <stdlib.h>
 
 /***********************************************************
  Function Definitions
 ***********************************************************/
 uint8_t* my_memmove(uint8_t* src, uint8_t* dst, size_t length){
+  if (src > dst) 
+    return my_memcopy(src, dst, length);
+  
   for (int i=length-1; i>=0; i--){
     *(dst + i) = *(src + i);
   }
@@ -42,7 +46,7 @@ uint8_t* my_memcopy(uint8_t* src, uint8_t* dst, size_t length){
 
 uint8_t* my_memset(uint8_t* src, size_t length, uint8_t value){
   for (int i=0; i<length; i++){
-    *(ptr+i) = value;
+    *(src+i) = value;
   }
   return src;
 }
@@ -52,14 +56,25 @@ uint8_t* my_memzero(uint8_t* src, size_t length){
 }
 
 uint8_t* my_reverse(uint8_t* src, size_t length){
-  return sort_array(src, length);
+  int start = 0;
+  int end = length - 1;
+  uint8_t tmp;
+  while (start < end){
+    tmp = *(src+end);
+    *(src+end) = *(src+start);
+    *(src+start) = tmp;
+    
+    start++;
+    end--;
+  }
+  return src;
 }
 
 int32_t* reserve_words(size_t length){
-  return malloc(length);
+  return (int32_t*)calloc(length, sizeof(int32_t));
 }
 
-void free_words(int32_t* src){
+void free_words(uint32_t* src){
   free(src);
 }
 
